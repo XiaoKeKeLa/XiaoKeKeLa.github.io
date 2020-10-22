@@ -1,0 +1,412 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>《Ray Tracing in a Weekend》学习笔记01 | XiaoKeKe</title><meta name="keywords" content="计算机图形学"><meta name="author" content="XiaoKeKe"><meta name="copyright" content="XiaoKeKe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="《Ray Tracing in a Weekend》学习笔记01">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Ray Tracing in a Weekend》学习笔记01">
+<meta property="og:url" content="http://xiaokeke.vip/2020/10/18/%E3%80%8ARay%20Tracing%20in%20a%20Weekend%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001/index.html">
+<meta property="og:site_name" content="XiaoKeKe">
+<meta property="og:description" content="《Ray Tracing in a Weekend》学习笔记01">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xiaokeke.vip/pictures/12.jpg">
+<meta property="article:published_time" content="2020-10-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-10-22T13:49:41.085Z">
+<meta property="article:author" content="XiaoKeKe">
+<meta property="article:tag" content="计算机图形学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xiaokeke.vip/pictures/12.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://xiaokeke.vip/2020/10/18/%E3%80%8ARay%20Tracing%20in%20a%20Weekend%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?d3687b883650e76d890ba1b6274e25c4";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.2.0',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: XiaoKeKe","link":"链接: ","source":"来源: XiaoKeKe","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: false,
+  postUpdate: '2020-10-22 21:49:41'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><style type="text/css">#toggle-sidebar {bottom: 80px}</style><meta name="generator" content="Hexo 5.2.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">6</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">2</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">2</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pictures/12.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">XiaoKeKe</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">《Ray Tracing in a Weekend》学习笔记01</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-10-17T16:00:00.000Z" title="undefined 2020-10-18 00:00:00">2020-10-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Ray-Tracing/">Ray Tracing</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>一、前期准备工作</p>
+<p>1.下载一个<a target="_blank" rel="noopener" href="http://www.121down.com/soft/softview-42834.html">ppmview</a>，用来看效果图。</p>
+<p>2.需要你会C/C++</p>
+<p>二、学习小结</p>
+<p>黑体标题是按原文的标题来的，简单的章节会自动跳动。</p>
+<p><strong>2.Output an Image</strong></p>
+<p>介绍了一下PPM</p>
+<p><img src="/pictures/RayTracing/image-20201012223604763.png" alt="PPM"></p>
+<p>作者给的main.c代码，运行结果就是输出一张简单的图片，运行结果见原书。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Image</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> image_width = <span class="number">256</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> image_height = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Render</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;P3\n&quot;</span> &lt;&lt; image_width &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; image_height &lt;&lt; <span class="string">&quot;\n255\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = image_height<span class="number">-1</span>; j &gt;= <span class="number">0</span>; --j) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; image_width; ++i) &#123;</span><br><span class="line">            <span class="keyword">auto</span> r = <span class="keyword">double</span>(i) / (image_width<span class="number">-1</span>);</span><br><span class="line">            <span class="keyword">auto</span> g = <span class="keyword">double</span>(j) / (image_height<span class="number">-1</span>);</span><br><span class="line">            <span class="keyword">auto</span> b = <span class="number">0.25</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">int</span> ir = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">255.999</span> * r);</span><br><span class="line">            <span class="keyword">int</span> ig = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">255.999</span> * g);</span><br><span class="line">            <span class="keyword">int</span> ib = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">255.999</span> * b);</span><br><span class="line"></span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; ir &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; ig &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; ib &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有以下几个问题需要注意：</p>
+<p>1.使用会auto报错。默认把auto当做声明为自动变量。（自动变量意为拥有自动的生命周期）。这是C++98的标准。可自行百度auto在c++中的使用。</p>
+<p>解决办法：</p>
+<p>版本：Dev-C++ 4.8.1及以上<br>找到：工具- &gt;编译选项- &gt;程序<br>对应项改为：g++ -std=c++11</p>
+<p>2.直接运行作者的代码是看不到效果图的，通过使用 “**&gt;**” 重定向运算符来生成ppm文件(对着目录文件夹shift＋鼠标右键，选择powershell打开)，再用记事本打开ppm文件，按图示将编码改为UTF-8（这里也可以直接用notepad++修改更方便）。再将<a target="_blank" rel="noopener" href="https://convertio.co/zh/txt-ppm/">txt文件转换为ppm格式</a>，就可以用PMView打开查看效果图。</p>
+<p><img src="/pictures/RayTracing/2.png" alt="生成ppm文件"></p>
+<p>记事本修改方法，较麻烦不推荐：</p>
+<p><img src="/pictures/RayTracing/3.png" alt="记事本修改"></p>
+<p>notepad++修改方法更简单：</p>
+<p><img src="/pictures/RayTracing/image-20201015223955099.png" alt="notepad++修改"></p>
+<p><img src="/pictures/RayTracing/4.png" alt="效果图"></p>
+<p><strong>3.The vec3 Class</strong></p>
+<p>几乎所有的图形程序都有一些用于存储几何矢量和颜色的类。 在许多系统中，这些向量是4D（3D加上几何的齐次坐标，而RGB加上颜色的alpha透明通道）。 就我们的目的而言，三个坐标就足够了。 我们将对颜色，位置，方向，偏移量等使用相同的vec3类。</p>
+<p><strong>3.1 Variables and Methods</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//vec3.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> VEC3_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> VEC3_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="built_in">std</span>::<span class="built_in">sqrt</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">vec3</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        vec3() : e&#123;<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>&#125; &#123;&#125;<span class="comment">//默认向量为(0,0,0)</span></span><br><span class="line">        vec3(<span class="keyword">double</span> e0, <span class="keyword">double</span> e1, <span class="keyword">double</span> e2) : e&#123;e0, e1, e2&#125; &#123;&#125;<span class="comment">//有初始值的向量</span></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">double</span> <span class="title">x</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> e[<span class="number">0</span>]; &#125;<span class="comment">//返回x值</span></span><br><span class="line">        <span class="function"><span class="keyword">double</span> <span class="title">y</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> e[<span class="number">1</span>]; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">double</span> <span class="title">z</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> e[<span class="number">2</span>]; &#125;</span><br><span class="line"></span><br><span class="line">        vec3 <span class="keyword">operator</span>-() <span class="keyword">const</span> &#123; <span class="keyword">return</span> vec3(-e[<span class="number">0</span>], -e[<span class="number">1</span>], -e[<span class="number">2</span>]); &#125;<span class="comment">//重载-</span></span><br><span class="line">        <span class="keyword">double</span> <span class="keyword">operator</span>[](<span class="keyword">int</span> i) <span class="keyword">const</span> &#123; <span class="keyword">return</span> e[i]; &#125;<span class="comment">//重载[]</span></span><br><span class="line">        <span class="keyword">double</span>&amp; <span class="keyword">operator</span>[](<span class="keyword">int</span> i) &#123; <span class="keyword">return</span> e[i]; &#125;<span class="comment">//见注意事项</span></span><br><span class="line"></span><br><span class="line">        vec3&amp; <span class="keyword">operator</span>+=(<span class="keyword">const</span> vec3 &amp;v) &#123;<span class="comment">//重载+=</span></span><br><span class="line">            e[<span class="number">0</span>] += v.e[<span class="number">0</span>];</span><br><span class="line">            e[<span class="number">1</span>] += v.e[<span class="number">1</span>];</span><br><span class="line">            e[<span class="number">2</span>] += v.e[<span class="number">2</span>];</span><br><span class="line">            <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        vec3&amp; <span class="keyword">operator</span>*=(<span class="keyword">const</span> <span class="keyword">double</span> t) &#123;<span class="comment">//重载*=</span></span><br><span class="line">            e[<span class="number">0</span>] *= t;</span><br><span class="line">            e[<span class="number">1</span>] *= t;</span><br><span class="line">            e[<span class="number">2</span>] *= t;</span><br><span class="line">            <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        vec3&amp; <span class="keyword">operator</span>/=(<span class="keyword">const</span> <span class="keyword">double</span> t) &#123;<span class="comment">//重载/=</span></span><br><span class="line">            <span class="keyword">return</span> *<span class="keyword">this</span> *= <span class="number">1</span>/t;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">double</span> <span class="title">length</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;<span class="comment">//返回向量长度</span></span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">sqrt</span>(length_squared());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">double</span> <span class="title">length_squared</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> e[<span class="number">0</span>]*e[<span class="number">0</span>] + e[<span class="number">1</span>]*e[<span class="number">1</span>] + e[<span class="number">2</span>]*e[<span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="keyword">double</span> e[<span class="number">3</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Type aliases for vec3</span></span><br><span class="line"><span class="keyword">using</span> point3 = vec3;   <span class="comment">// 3D point</span></span><br><span class="line"><span class="keyword">using</span> color = vec3;    <span class="comment">// RGB color</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>注意事项：</p>
+<p>C++中，const类型对象只能调用const成员函数，但非const类型对象对于重载了const和非const的函数，会优先调用非const函数。这也提醒我们对于确定不想改变的变量，一定要定义为const类型，防止调用了某个非const的成员函数改变了对象数据却没有发现！</p>
+<p>一个类重载operator[] ()函数时，要重载operator[]两次，一个是const函数，一个是非const函数。const函数的返回值用按值传递，非const函数的返回值用引用。只实现一次重载，在某些情况下是会报错的。</p>
+<p><strong>3.2 vec3 Utility Functions</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//vec3.h</span></span><br><span class="line"><span class="comment">// vec3 Utility Functions</span></span><br><span class="line"><span class="comment">//inline是C++关键字，在函数声明或定义中，函数返回类型前加上关键字inline，即可以把函数指定为内联函数。    这样可以解决一些频繁调用的函数大量消耗栈空间（栈内存）的问题</span></span><br><span class="line"><span class="comment">//重载输出运算符&lt;&lt;</span></span><br><span class="line"><span class="keyword">inline</span> <span class="built_in">std</span>::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(<span class="built_in">std</span>::ostream &amp;out, <span class="keyword">const</span> vec3 &amp;v) &#123;</span><br><span class="line">    <span class="keyword">return</span> out &lt;&lt; v.e[<span class="number">0</span>] &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; v.e[<span class="number">1</span>] &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; v.e[<span class="number">2</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//重载运算符+</span></span><br><span class="line"><span class="keyword">inline</span> vec3 <span class="keyword">operator</span>+(<span class="keyword">const</span> vec3 &amp;u, <span class="keyword">const</span> vec3 &amp;v) &#123;</span><br><span class="line">    <span class="keyword">return</span> vec3(u.e[<span class="number">0</span>] + v.e[<span class="number">0</span>], u.e[<span class="number">1</span>] + v.e[<span class="number">1</span>], u.e[<span class="number">2</span>] + v.e[<span class="number">2</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//重载运算符-</span></span><br><span class="line"><span class="keyword">inline</span> vec3 <span class="keyword">operator</span>-(<span class="keyword">const</span> vec3 &amp;u, <span class="keyword">const</span> vec3 &amp;v) &#123;</span><br><span class="line">    <span class="keyword">return</span> vec3(u.e[<span class="number">0</span>] - v.e[<span class="number">0</span>], u.e[<span class="number">1</span>] - v.e[<span class="number">1</span>], u.e[<span class="number">2</span>] - v.e[<span class="number">2</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//重载运算符*，vec*vec</span></span><br><span class="line"><span class="keyword">inline</span> vec3 <span class="keyword">operator</span>*(<span class="keyword">const</span> vec3 &amp;u, <span class="keyword">const</span> vec3 &amp;v) &#123;</span><br><span class="line">    <span class="keyword">return</span> vec3(u.e[<span class="number">0</span>] * v.e[<span class="number">0</span>], u.e[<span class="number">1</span>] * v.e[<span class="number">1</span>], u.e[<span class="number">2</span>] * v.e[<span class="number">2</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//重载运算符*，double*vec</span></span><br><span class="line"><span class="keyword">inline</span> vec3 <span class="keyword">operator</span>*(<span class="keyword">double</span> t, <span class="keyword">const</span> vec3 &amp;v) &#123;</span><br><span class="line">    <span class="keyword">return</span> vec3(t*v.e[<span class="number">0</span>], t*v.e[<span class="number">1</span>], t*v.e[<span class="number">2</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//重载运算符*，vec*double</span></span><br><span class="line"><span class="keyword">inline</span> vec3 <span class="keyword">operator</span>*(<span class="keyword">const</span> vec3 &amp;v, <span class="keyword">double</span> t) &#123;</span><br><span class="line">    <span class="keyword">return</span> t * v;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//重载运算符/，vec/double</span></span><br><span class="line"><span class="keyword">inline</span> vec3 <span class="keyword">operator</span>/(vec3 v, <span class="keyword">double</span> t) &#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="number">1</span>/t) * v;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//定义点乘函数</span></span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">double</span> <span class="title">dot</span><span class="params">(<span class="keyword">const</span> vec3 &amp;u, <span class="keyword">const</span> vec3 &amp;v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> u.e[<span class="number">0</span>] * v.e[<span class="number">0</span>]</span><br><span class="line">         + u.e[<span class="number">1</span>] * v.e[<span class="number">1</span>]</span><br><span class="line">         + u.e[<span class="number">2</span>] * v.e[<span class="number">2</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//定义叉乘函数</span></span><br><span class="line"><span class="function"><span class="keyword">inline</span> vec3 <span class="title">cross</span><span class="params">(<span class="keyword">const</span> vec3 &amp;u, <span class="keyword">const</span> vec3 &amp;v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> vec3(u.e[<span class="number">1</span>] * v.e[<span class="number">2</span>] - u.e[<span class="number">2</span>] * v.e[<span class="number">1</span>],</span><br><span class="line">                u.e[<span class="number">2</span>] * v.e[<span class="number">0</span>] - u.e[<span class="number">0</span>] * v.e[<span class="number">2</span>],</span><br><span class="line">                u.e[<span class="number">0</span>] * v.e[<span class="number">1</span>] - u.e[<span class="number">1</span>] * v.e[<span class="number">0</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//定义转换单位向量函数</span></span><br><span class="line"><span class="function"><span class="keyword">inline</span> vec3 <span class="title">unit_vector</span><span class="params">(vec3 v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> v / v.length();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.3  Color Utility Functions</strong></p>
+<p>新建一个color.h</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//color.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> COLOR_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> COLOR_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;vec3.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">write_color</span><span class="params">(<span class="built_in">std</span>::ostream &amp;out, color pixel_color)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Write the translated [0,255] value of each color component.</span></span><br><span class="line">    <span class="comment">//编写每个颜色分量的转换后的[0,255]值。</span></span><br><span class="line">    out &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">255.999</span> * pixel_color.x()) &lt;&lt; <span class="string">&#x27; &#x27;</span></span><br><span class="line">        &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">255.999</span> * pixel_color.y()) &lt;&lt; <span class="string">&#x27; &#x27;</span></span><br><span class="line">        &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">255.999</span> * pixel_color.z()) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>现在main.c函数就要改成这样：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;color.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;vec3.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Image</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> image_width = <span class="number">256</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> image_height = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Render</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;P3\n&quot;</span> &lt;&lt; image_width &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; image_height &lt;&lt; <span class="string">&quot;\n255\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = image_height<span class="number">-1</span>; j &gt;= <span class="number">0</span>; --j) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">&quot;\rScanlines remaining: &quot;</span> &lt;&lt; j &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; <span class="built_in">std</span>::flush;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; image_width; ++i) &#123;</span><br><span class="line">            <span class="comment">//把image的所有像素调用write_color</span></span><br><span class="line">            <span class="function">color <span class="title">pixel_color</span><span class="params">(<span class="keyword">double</span>(i)/(image_width<span class="number">-1</span>), <span class="keyword">double</span>(j)/(image_height<span class="number">-1</span>), <span class="number">0.25</span>)</span></span>;</span><br><span class="line">            write_color(<span class="built_in">std</span>::<span class="built_in">cout</span>, pixel_color);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">&quot;\nDone.\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4.   Rays, a Simple Camera, and Background</strong></p>
+<p><strong>4.1  The ray Class</strong></p>
+<p>新建ray.h</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ray.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> RAY_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RAY_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;vec3.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ray</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        ray() &#123;&#125;</span><br><span class="line">        ray(<span class="keyword">const</span> point3&amp; origin, <span class="keyword">const</span> vec3&amp; direction)</span><br><span class="line">            : orig(origin), dir(direction)</span><br><span class="line">        &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="function">point3 <span class="title">origin</span><span class="params">()</span> <span class="keyword">const</span>  </span>&#123; <span class="keyword">return</span> orig; &#125;</span><br><span class="line">        <span class="function">vec3 <span class="title">direction</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> dir; &#125; </span><br><span class="line">        <span class="comment">//P（t）= A + tb</span></span><br><span class="line">        <span class="function">point3 <span class="title">at</span><span class="params">(<span class="keyword">double</span> t)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> orig + t*dir;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        point3 orig;</span><br><span class="line">        vec3 dir;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p><strong>4.2  Sending Rays Into the Scene</strong></p>
+<p>Now we are ready to turn the corner and make a ray tracer. <strong>At the core</strong>, the ray tracer sends rays through pixels and computes the color seen in the direction of those rays. The involved steps are <strong>(1) calculate the ray from the eye to the pixel, (2) determine which objects the ray intersects, and (3) compute a color for that intersection point.</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;color.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;ray.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;vec3.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">color <span class="title">ray_color</span><span class="params">(<span class="keyword">const</span> ray&amp; r)</span> </span>&#123;</span><br><span class="line">    vec3 unit_direction = unit_vector(r.direction());<span class="comment">//获得r的单位方向向量</span></span><br><span class="line">    <span class="keyword">auto</span> t = <span class="number">0.5</span>*(unit_direction.y() + <span class="number">1.0</span>);<span class="comment">//使得 0&lt;t&lt;1</span></span><br><span class="line">    <span class="keyword">return</span> (<span class="number">1.0</span>-t)*color(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>) + t*color(<span class="number">0.5</span>, <span class="number">0.7</span>, <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Image</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">auto</span> aspect_ratio = <span class="number">16.0</span> / <span class="number">9.0</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> image_width = <span class="number">400</span>;</span><br><span class="line">    <span class="comment">//保证宽高比为16:9</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> image_height = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(image_width / aspect_ratio);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Camera</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> viewport_height = <span class="number">2.0</span>;</span><br><span class="line">    <span class="keyword">auto</span> viewport_width = aspect_ratio * viewport_height;</span><br><span class="line">    <span class="keyword">auto</span> focal_length = <span class="number">1.0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> origin = point3(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">auto</span> horizontal = vec3(viewport_width, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">auto</span> vertical = vec3(<span class="number">0</span>, viewport_height, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//lower_left_corner获得屏幕左下角的位置</span></span><br><span class="line">    <span class="keyword">auto</span> lower_left_corner = origin - horizontal/<span class="number">2</span> - vertical/<span class="number">2</span> - vec3(<span class="number">0</span>, <span class="number">0</span>, focal_length);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;P3\n&quot;</span> &lt;&lt; image_width &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; image_height &lt;&lt; <span class="string">&quot;\n255\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = image_height<span class="number">-1</span>; j &gt;= <span class="number">0</span>; --j) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">&quot;\rScanlines remaining: &quot;</span> &lt;&lt; j &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; <span class="built_in">std</span>::flush;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; image_width; ++i) &#123;</span><br><span class="line">            <span class="keyword">auto</span> u = <span class="keyword">double</span>(i) / (image_width<span class="number">-1</span>);</span><br><span class="line">            <span class="keyword">auto</span> v = <span class="keyword">double</span>(j) / (image_height<span class="number">-1</span>);</span><br><span class="line">            <span class="comment">//从左下角开始，从下往上，从左向右，一行一行遍历</span></span><br><span class="line">            <span class="function">ray <span class="title">r</span><span class="params">(origin, lower_left_corner + u*horizontal + v*vertical - origin)</span></span>;</span><br><span class="line">            color pixel_color = ray_color(r);</span><br><span class="line">            write_color(<span class="built_in">std</span>::<span class="built_in">cout</span>, pixel_color);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">&quot;\nDone.\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ps:在将射线方向缩放到单位长度（因此-1.0 &lt;y &lt;1.0）之后，ray_color（ray）函数根据y坐标的高度线性混合白色和蓝色。 因为我们是在对向量进行归一化之后查看y高度，所以除了垂直渐变之外，您还会注意到颜色的水平渐变。<br>       然后，做了一个标准的图形技巧，将其缩放到0.0≤t≤1.0。 当t = 1.0时我想要蓝色。 当t = 0.0时我想要白色。 在这两者之间，我要混合。 这在两件事之间形成“线性混合”或“线性插值”或简称“ lerp”。  lerp总是形式<br>$$<br>blendedValue=(1−t)⋅startValue+t⋅endValue<br>$$<br><img src="/pictures/RayTracing/image-20201016112514547.png" alt="效果图"></p>
+<p>小总结：光线从origin射出。从viewport左下角开始计算，自下而上，自左向右，按行遍历像素。调用ray_color，计算光线在该像素的pixel_color。再调用write_color记录下该像素点的RGB。</p>
+<p>ray_color（const ray＆r）：算出r的单位向量，将该向量的y，控制在（0,1）之间，通过线性差值的方法，使得图像出现渐变色。</p>
+<p>write_color(std::ostream &amp;out, color pixel_color) ：pixel_color.x()乘255.999的目的就是把输出值控制在[0,255]之间，因为pixel_color.x()是在(0,1)之间。</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">XiaoKeKe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://xiaokeke.vip/2020/10/18/%E3%80%8ARay%20Tracing%20in%20a%20Weekend%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001/">http://xiaokeke.vip/2020/10/18/%E3%80%8ARay%20Tracing%20in%20a%20Weekend%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://xiaokeke.vip" target="_blank">XiaoKeKe</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</a></div><div class="post_share"></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/10/21/%E9%9A%8F%E6%9C%BA%E5%BF%AB%E6%8E%92/"><img class="prev-cover" src="/img/1.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">随机快排</div></div></a></div><div class="next-post pull-right"><a href="/2020/10/12/%E5%A0%86%E6%8E%92%E5%BA%8F/"><img class="next-cover" src="/pictures/13.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">堆排序</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer" style="background-image: url(/pictures/12.jpg)"><div id="footer-wrap"><div class="copyright">&copy;2020 By XiaoKeKe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi,welcome to my <a  href="https://xiaokeke.vip/">blog</a>!</div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const initData = {
+      el: '#vcomment',
+      appId: 'b7CqLwsUzcSW7Us7nKA6adgV-MdYXbMMI',
+      appKey: '2WeeFdYKTUH0RamotOEUqCHb',
+      placeholder: 'Please leave your footprints',
+      avatar: 'mp',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'zh-CN',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: {"tv_doge":"6ea59c827c414b4a2955fe79e0f6fd3dcd515e24.png","tv_亲亲":"a8111ad55953ef5e3be3327ef94eb4a39d535d06.png","tv_偷笑":"bb690d4107620f1c15cff29509db529a73aee261.png","tv_再见":"180129b8ea851044ce71caf55cc8ce44bd4a4fc8.png"," tv_冷漠":"b9cbc755c2b3ee43be07ca13de84e5b699a3f101.png","tv_发怒":"34ba3cd204d5b05fec70ce08fa9fa0dd612409ff.png","tv_发财":"34db290afd2963723c6eb3c4560667db7253a21a.png","tv_可爱":"9e55fd9b500ac4b96613539f1ce2f9499e314ed9.png","tv_吐血":"09dd16a7aa59b77baa1155d47484409624470c77.png","tv_呆":"fe1179ebaa191569b0d31cecafe7a2cd1c951c9d.png","tv_呕吐":"9f996894a39e282ccf5e66856af49483f81870f3.png","tv_困":"241ee304e44c0af029adceb294399391e4737ef2 .png","tv_坏笑":"1f0b87f731a671079842116e0991c91c2c88645a.png","tv_大佬":"093c1e2c490161aca397afc45573c877cdead616.png","tv_大哭":"23269aeb35f99daee28dda129676f6e9ea87934f.png","tv_委屈":"d04dba7b5465779e9755d2ab6f0a897b9b33bb77.png","tv_害羞":"a37683fb5642fa3ddfc7f4e5525fd13e42a2bdb1.png","tv_尴尬":"7cfa62dafc59798a3d3fb262d421eeeff166cfa4.png","tv_微笑":"70dc5c7b56f93eb61bddba11e28fb1d18fddcd4c.png","tv_思考":" 90cf159733e558137ed20aa04d09964436f618a1.png","tv_惊吓":"0d15c7e2ee58e935adc6a7193ee042388adc22af.png"},
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.17.0/js/md5.min.js"></script><script>window.addEventListener('load', () => {
+  const changeContent = (content) => {
+    if (content === '') return content
+
+    content = content.replace(/<[^>]+>/g,"") // remove html tag
+    content = content.replace(/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|webp)/g, '') // remove image link
+    content = content.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi, '') // remove url
+
+    if (content.length > 150) {
+      content = content.substring(0,150) + '...'
+    }
+    return content
+  }
+
+  const getIcon = (icon, mail) => {
+    if (icon) return icon 
+    let defaultIcon = '?d=mp'
+    let iconUrl = `https://gravatar.loli.net/avatar/${md5(mail.toLowerCase()) + defaultIcon}`
+    return iconUrl
+  }
+
+  const generateHtml = array => {
+    let result = ''
+
+    for (let i = 0; i < array.length; i++) {
+      result += '<div class=\'aside-list-item\'>'
+
+      if (true) {
+        result += `<a href='${array[i].url}' class="thumbnail"><img src='${getIcon(array[i].avatar, array[i].mail)}' alt='${array[i].nick}'></a>`
+      }
+
+      result += `<div class='content'>
+      <a class='comment' href='${array[i].url}'>${array[i].content}</a>
+      <div class='name'><span>${array[i].nick}</span><time> / ${btf.diffDate(array[i].date, true)}</time></div>
+      </div></div>`
+    }
+
+    let $dom = document.querySelector('#card-newest-comments .aside-list')
+    $dom.innerHTML= result
+    window.pjax && window.pjax.refresh($dom)
+  }
+
+  const getValineData = () => {
+      let serverURL = ''
+      if (false) {
+        serverURL = ''
+      } else {
+        serverURL = 'https://b7CqLwsU.api.lncldglobal.com'
+      }
+
+    var settings = {
+      "url": `${serverURL}/1.1/classes/Comment?limit=6&order=-createdAt`,
+      "method": "GET",
+      "timeout": 0,
+      "headers": {
+        "X-LC-Id": 'b7CqLwsUzcSW7Us7nKA6adgV-MdYXbMMI',
+        "X-LC-Key": '2WeeFdYKTUH0RamotOEUqCHb',
+        "Content-Type": "application/json"
+      },
+    }
+
+    $.ajax(settings).done((response) => {
+      var valineArray = []
+      response.results.forEach((e)=>{
+        valineArray.push({
+          'avatar': e.QQAvatar,
+          'content': changeContent(e.comment),
+          'mail': e.mail,
+          'nick': e.nick,
+          'url': e.url,
+          'date': e.createdAt,
+        })
+      })
+      
+      saveToLocal.set('leancloud-newest-comments', JSON.stringify(valineArray), 10/(60*24))
+      generateHtml(valineArray)
+
+    }).fail(()=>{
+      const $dom = document.querySelector('#card-newest-comments .aside-list')
+      $dom.innerHTML= "无法获取资料，请确认相关配置是否正确"
+    })
+  }
+
+  const newestCommentInit = () => {
+    if (document.querySelector('#card-newest-comments .aside-list')) {
+      const data = saveToLocal.get('leancloud-newest-comments')
+      if (data) {
+        generateHtml(JSON.parse(data))
+      } else {
+        getValineData()
+      }
+    }
+  }
+
+  newestCommentInit()
+  document.addEventListener('pjax:complete', newestCommentInit)
+})</script><div class="aplayer no-destroy" data-id="7728282858" data-server="tencent" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="random" data-preload="none" data-autoplay="false" muted></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = [
+  'title',
+  '#config_change',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '.js-pjax'
+]
+
+if (false) {
+  pjaxSelectors.unshift('meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]')
+}
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  $('script[data-pjax]').each(function () {
+    $(this).parent().append($(this).remove())
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  if (typeof gtag === 'function') {
+    gtag('config', '', {'page_path': window.location.pathname});
+  }
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // Analytics
+  if (false) {
+    MtaH5.pgv()
+  }
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+
+document.addEventListener('pjax:send', function () {
+  typeof preloader === 'object' && preloader.initLoading()
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  $(window).off('scroll')
+
+  //reset readmode
+  $('body').hasClass('read-mode') && $('body').removeClass('read-mode')
+
+})</script></div></body></html>
