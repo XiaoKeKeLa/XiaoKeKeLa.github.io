@@ -7,7 +7,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://xiaokeke.vip/pictures/12.jpg">
 <meta property="article:published_time" content="2020-10-17T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-10-23T13:19:16.248Z">
+<meta property="article:modified_time" content="2020-10-23T13:27:07.726Z">
 <meta property="article:author" content="XiaoKeKe">
 <meta property="article:tag" content="计算机图形学">
 <meta name="twitter:card" content="summary">
@@ -87,7 +87,7 @@ var saveToLocal = {
   isHome: false,
   isHighlightShrink: false,
   isSidebar: true,
-  postUpdate: '2020-10-23 21:19:16'
+  postUpdate: '2020-10-23 21:27:07'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -155,7 +155,7 @@ var saveToLocal = {
 <p>二、学习小结</p>
 <p>黑体标题是按原文的标题来的，简单的章节会自动跳动。</p>
 <h4 id="2-Output-an-Image"><a href="#2-Output-an-Image" class="headerlink" title="2.Output an Image"></a><strong>2.Output an Image</strong></h4><p>介绍了一下PPM</p>
-<p><img src="/pictures/RayTracing/01/image-20201012223604763.png" alt="PPM"></p>
+<p><img src="/pictures/RayTracing/01/7.png" alt="PPM"></p>
 <p>作者给的main.c代码，运行结果就是输出一张简单的图片，运行结果见原书。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Image</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> image_width = <span class="number">256</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> image_height = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Render</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;P3\n&quot;</span> &lt;&lt; image_width &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; image_height &lt;&lt; <span class="string">&quot;\n255\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = image_height<span class="number">-1</span>; j &gt;= <span class="number">0</span>; --j) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; image_width; ++i) &#123;</span><br><span class="line">            <span class="keyword">auto</span> r = <span class="keyword">double</span>(i) / (image_width<span class="number">-1</span>);</span><br><span class="line">            <span class="keyword">auto</span> g = <span class="keyword">double</span>(j) / (image_height<span class="number">-1</span>);</span><br><span class="line">            <span class="keyword">auto</span> b = <span class="number">0.25</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">int</span> ir = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">255.999</span> * r);</span><br><span class="line">            <span class="keyword">int</span> ig = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">255.999</span> * g);</span><br><span class="line">            <span class="keyword">int</span> ib = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">255.999</span> * b);</span><br><span class="line"></span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; ir &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; ig &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; ib &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
